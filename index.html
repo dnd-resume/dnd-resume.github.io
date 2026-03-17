@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <meta content="My D&D Player Resume" property="og:title" />
+  <meta content="A little info about me, the type of group I'm looking for, and some characters I've made in the past." property="og:description" />
+  <meta content="https://dnd-resume.github.io/" property="og:url" />
+  <meta content="#c6a75e" data-react-helmet="true" name="theme-color" />
+  <meta content="https://dnd-resume.github.io/favicon.png" property="og:image" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>D&D Resume</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Spectral:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-dark: #0e0e12;
+  --parchment: #1a1612;
+  --gold: #c6a75e;
+  --gold-glow: rgba(198,167,94,0.35);
+  --text-main: #f4f1ea;
+  --text-muted: #b8b3a7;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(circle at 20% 30%, #1b1b22, #0e0e12 70%);
+  color: var(--text-main);
+  font-family: "Spectral", serif;
+  padding: 40px 40px;
+  overflow-x: hidden;
+}
+
+/* Subtle rune background */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(rgba(198,167,94,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: drift 60s linear infinite;
+  z-index: 0;
+}
+
+@keyframes drift {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-200px); }
+}
+
+.header {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto 40px auto;
+}
+
+.header h1 {
+  font-family: "Cinzel", serif;
+  font-size: 2.8rem;
+  letter-spacing: 2px;
+  color: var(--gold);
+  margin-bottom: 20px;
+  text-shadow: 0 0 15px var(--gold-glow);
+}
+
+.header p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  max-width: 700px;
+}
+
+/* GRID */
+
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+/* CARD */
+
+.card {
+  background: linear-gradient(145deg, #1a1612, #141217);
+  border: 1px solid rgba(198,167,94,0.2);
+  border-radius: 18px;
+  padding: 28px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: radial-gradient(circle at top left, rgba(198,167,94,0.15), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card:hover, .card.fullscreen {
+  transform: translateY(-6px) scale(1.02);
+  border-color: var(--gold);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.card:hover::before, .card.fullscreen::before {
+  opacity: 1;
+}
+
+/* EXPANDED */
+
+.card {
+  background: linear-gradient(145deg, #1a1612, #141217);
+  border: 1px solid rgba(198,167,94,0.2);
+  border-radius: 18px;
+  padding: 28px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.card:hover, .card.fullscreen {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+/* Active expanding state */
+.card.expanding {
+  position: fixed;
+  margin: 0;
+  z-index: 999;
+  border-radius: 18px;
+  transition: 
+    top 0.45s cubic-bezier(.22,.8,.25,1),
+    left 0.45s cubic-bezier(.22,.8,.25,1),
+    width 0.45s cubic-bezier(.22,.8,.25,1),
+    height 0.45s cubic-bezier(.22,.8,.25,1),
+    border-radius 0.3s ease;
+  will-change: top, left, width, height;
+  overflow: hidden;
+}
+.card.fullscreen {
+  overflow-y: auto;
+  border-radius: 18px;
+}
+
+.close-btn {
+  display: none;
+  position: absolute;
+  top: 22px;
+  right: 26px;
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: transparent;
+  color: var(--gold);
+  font-size: 26px;
+  line-height: 34px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.close-btn::before {
+  content: "×";
+}
+
+.card.fullscreen .close-btn {
+  display: block;
+}
+
+.close-btn:hover {
+  transform: scale(1.15);
+  opacity: 0.9;
+}
+
+.card.fullscreen h2 {
+  font-size: 3rem;
+}
+
+.card h2 {
+  font-family: "Cinzel", serif;
+  font-size: 1.6rem;
+  color: var(--gold);
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+  transition: font-size 0.3s ease;
+}
+
+.tags {
+  margin-bottom: 6px;
+}
+
+.tag {
+  display: inline-block;
+  border: 1px solid rgba(198,167,94,0.3);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-right: 8px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.spread {
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text-main);
+}
+
+.description {
+  line-height: 1.8;
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 800px;
+}
+
+/* Close button */
+
+.expanded-text {
+  display: block;
+  opacity: 0;
+  line-height: 1.8;
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-top: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.card.fullscreen .expanded-text {
+  opacity: 1;
+}
+
+.card.fullscreen .description {
+  /* opacity: 0; /* optional: fade out original description */
+  transition: opacity 0.3s ease;
+}
+
+.card.expanding {
+  position: fixed;
+  z-index: 999;
+  border-radius: 18px;
+  overflow: hidden;
+  transition: top 0.5s ease, left 0.5s ease, width 0.5s ease, height 0.5s ease, border-radius 0.3s ease;
+}
+
+.expanded-text {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  height: 0;
+}
+
+.card.fullscreen .expanded-text {
+  opacity: 1;
+  height: auto;
+}
+
+.card.fullscreen .description {
+  /*opacity: 0;*/
+  transition: opacity 0.3s ease;
+}
+
+.card .close-btn {
+  display: none;
+}
+
+.card.fullscreen .close-btn {
+  display: block;
+}
+
+/* Link styling inside cards */
+.card a {
+  color: var(--gold);
+  text-decoration: none;
+  position: relative;
+  /*font-weight: 600;*/
+  transition: color 0.25s ease;
+}
+
+/* Subtle animated underline */
+.card a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 4px; /* controls how far down it is */
+  width: 100%;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+  box-shadow: 0 0 6px var(--gold-glow);
+}
+
+.card a:hover {
+  color: #e7c97a; /* slightly brighter gold */
+}
+
+.card a:hover::after {
+  transform: scaleX(1);
+}
+
+/* Optional: active state */
+.card a:active {
+  opacity: 0.8;
+}
+
+/* Restore indentation for lists in expanded text */
+.expanded-text ul {
+  padding-left: 1.2em; /* standard indentation */
+  list-style-type: disc; /* solid bullet points */
+}
+
+/* Sub-bullet styling */
+.expanded-text ul ul {
+  list-style-type: circle; /* hollow circle */
+}
+
+.card.fullscreen {
+  max-height: calc(100vh - 80px); /* keep card within viewport with margin */
+  padding-right: 5px;     /* optional: avoid content hiding behind scrollbar */
+}
+
+@media (max-width: 400px) {
+  body {
+    padding: 20px;
+  }
+  .grid {
+    grid-template-columns: 1fr; /* single-column layout on small screens */
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 2rem;
+  }
+  .card h2 {
+    font-size: 1.2rem;
+  }
+  .card .description,
+  .card .expanded-text {
+    font-size: 0.9rem;
+  }
+}
+
+.header.blurred, .grid.blurred .card:not(.fullscreen):not(.expanding) {
+  filter: blur(5px);
+  opacity: 0.4;
+  transition: filter 0.35s ease, opacity 0.35s ease, transform 0.35s ease;
+}
+
+.grid.blurred .card:not(.fullscreen):not(.expanding) {
+  transform: scale(0.94);
+}
+
+.card.fullscreen .card-content {
+  overflow-y: auto;
+  max-height: calc(100vh - 80px);
+  padding-right: 20px;
+}
+.scroll-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.card.fullscreen .scroll-fade {
+  opacity: 1;
+}
+
+.scroll-fade::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(20,18,23,0),
+    rgba(20,18,23,0.95)
+  );
+}
+.card {
+  padding: 0px;
+  overflow: hidden;
+  overflow-y: hidden;
+}
+.card-content {
+  padding: 28px;
+}
+
+.card-content::-webkit-scrollbar { width: 3px; }
+.card-content::-webkit-scrollbar-track { background: transparent; }
+.card-content::-webkit-scrollbar-thumb {
+  background: rgba(198,167,94,0.6);
+  border-radius: 3px;
+}
+.card-content::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
+
+body::-webkit-scrollbar { width: 3px; }
+body::-webkit-scrollbar-track { background: #0e0e12; }
+body::-webkit-scrollbar-thumb {
+  background: rgba(198,167,94,0.6);
+  border-radius: 3px;
+}
+body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
+
+.expanded-text a {
+  display: inline-block; /* ensures width is well-defined */
+  position: relative;    /* needed for ::after */
+  overflow: visible;     /* prevent clipping from parent overflow */
+  z-index: 1;
+}
+.expanded-text {
+  padding-bottom: 20px;
+}
+.expanded-text {
+  pointer-events: none;
+}
+
+.card.fullscreen .expanded-text {
+  pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+  .card.fullscreen h2 {
+    font-size: 1.6rem;
+    line-height: 1.3;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>About me</h1>
+  <p>
+    The best way to tell a compelling story is to support it with great mechanics.<br><br>
+    I'm a mechanically engaged player who enjoys creating fun and outside-the-box characters around emergent mechanical synergies.
+    If you also love character building, I'm always happy to lend an ear, share tips, or brainstorm ideas together!
+    <br><br>
+    My dream group starts at level 8 or higher, has an even split of roleplay and combat, sticks to RAW/RAI rather than rule-of-cool, allows most published content, and most importantly is focused on creating cohesive narratives together instead of freeform improv.
+  </p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card-content">
+      <button class="close-btn"></button>
+      <h2>Necrorder</h2>
+      <div class="tags">
+      <span class="tag">Full Caster</span>
+        <span class="tag">Summoner</span>
+        <span class="tag">Status Effects</span>
+      </div>
+      <div class="spread">Order Cleric 3 / Necromancy Wizard 6+</div>
+      <div class="description">
+        A table-friendly summoner built around inflicting status effects and capitalising on them.
+      </div>
+      <div class="expanded-text">
+        <p><b>Species:</b> <a href="https://5e.tools/races.html#kobold_mpmm" target="_blank" rel="noopener noreferrer">Kobold</a></p>
+        <p><b>Background:</b> <a href="https://5e.tools/backgrounds.html#knight%20of%20solamnia_dsotdq" target="_blank" rel="noopener noreferrer">Knight of Solamnia</a></p>
+        <p><b>Feats:</b> <a href="https://5e.tools/feats.html#squire%20of%20solamnia_dsotdq" target="_blank" rel="noopener noreferrer">Squire of Solamnia</a>, <a href="https://5e.tools/feats.html#putrefy_abh" target="_blank" rel="noopener noreferrer">Putrefy</a>, <a href="https://5e.tools/feats.html#knight%20of%20the%20crown_dsotdq" target="_blank" rel="noopener noreferrer">Knight of the Crown</a></p>
+        <br>
+        <p>
+          The core of this build is the <i><a href="https://5e.tools/spells.html#summon%20undead_xphb" target="_blank" rel="noopener noreferrer">Summon Undead</a></i> spell, which creates a single Undead summon with unique abilities.
+
+          Compared to conventional School of Necromancy builds, where dozens of animated dead slow the game to a crawl, this character is far more table-friendly, and much more fun to play.
+          <br><br>
+          In the 2014 rules, the Putrid <a href="https://5e.tools/bestiary.html#undead%20spirit_xphb" target="_blank" rel="noopener noreferrer">Undead Spirit</a>'s Rotting Claw attack required a Constitution save to render a Poisoned creature Paralyzed, but in the 2024 ruleset this was buffed by removing the save entirely, so a single hit is now enough to take a poisoned creature out of play.
+          <br><br>
+          Additionally, Poisoned is one of the easiest conditions to trigger in D&D, especially in the 2024 ruleset.
+          <ul>
+            <li><i><a href="https://5e.tools/spells.html#ray%20of%20sickness_xphb" target="_blank" rel="noopener noreferrer">Ray of Sickness</a></i>, a 1st-level spell capable of inflicting Poisoned on a hit, was also buffed in 2024 similarly to the Undead Spirit.</li>
+            <li>The Putrid Undead Spirit itself has the Festering Aura trait, which renders on any creature within 5 feet of it Poisoned if they fail a Constitution save.</li>
+          </ul>
+          <br>
+          The Spirit can also be buffed using a number of different effects.
+          <ul>
+            <li>Necromancy Wizard's Undead Thralls feature makes the normally squishy spirit dramatically more durable by adding your Wizard level to its health, and boosts its damage by adding your proficiency bonus to damage rolls.</li>
+            <li>Kobold's Draconic Cry can give all your allies, including the Spirit, advantage on their attacks against any creature caught in the area of effect for an entire round.</li>
+            <li>Order Cleric's Voice of Authority can grant one ally, including the spirit, an additional attack when you target them with a spell. This can even be a buff such as <i><a href="https://5e.tools/spells.html#longstrider_xphb" target="_blank" rel="noopener noreferrer">Longstrider</a></i>, <i><a href="https://5e.tools/spells.html#vortex%20warp_scc" target="_blank" rel="noopener noreferrer">Vortex Warp</a></i>, or <i><a href="https://5e.tools/spells.html#healing%20word_xphb" target="_blank" rel="noopener noreferrer">Healing Word</a></i>.</li>
+            <li>If the spirit already has advantage on its attacks (for example, against a Paralyzed foe), Knight of the Crown's Commanding Rally replaces Draconic Cry as the best bonus action option, granting the Spirit an additional attack whilst still conserving your reaction for defensive spells.</li>
+          </ul>
+          <br>
+          Finally, this build has access to some synergies and emergent interactions that take it to the next level.
+          <ul>
+            <li>
+              <i><a href="https://5e.tools/spells.html#wither%20and%20bloom_scc" target="_blank" rel="noopener noreferrer">Wither and Bloom</a></i>, a 2nd-level spell, has a strong synergy with the Putrefy feat and Voice of Authority.
+              <ul>
+                <li><i>Wither and Bloom</i> deals necrotic damage even on a successful save, which triggers the Putrefy feat, rendering the victim Poisoned.</li>
+                <li>Additionally, the spell can also buff one ally within range, restoring some of their health. However, the real power comes from the fact that this can trigger Voice of Authority, letting the spirit immediately attack and potentially convert that directly into Paralysis.</li>
+              </ul>
+            </li>
+            <li>
+              <i><a href="https://5e.tools/spells.html#silvery%20barbs_scc" target="_blank" rel="noopener noreferrer">Silvery Barbs</a></i>, a 1st-level reaction spell, has a powerful interaction with Festering Aura that can double the duration of the Paralysis inflicted by Rotting Claw.
+              <ul>
+                <li>Festering Aura forces foes within 5 feet of the Undead Spirit to make a Constitution save at the start of their turn against being Poisoned even if they have the condition already.</li>
+                <li>If they succeed, we can use Silvery Barbs, giving advantage to the spirit on its next attack, and rerolling their save against being Poisoned, potentially inflicting the condition if they didn't have it already.</li>
+                <li>Since Silvery Barbs targeted the spirit, Voice of Authority Triggers, and the spirit makes an attack with Rotting Claw.</li>
+                <li>If this attack hits, the target is paralyzed until the end of their next turn, as always. However, since Rotting Claw triggered on their turn, this paralyses them for two turns.</li>
+              </ul>
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="scroll-fade"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <button class="close-btn"></button>
+      <h2>Hit 'em hard</h2>
+      <div class="tags">
+        <span class="tag">Half Caster</span>
+        <span class="tag">Weapon Mastery</span>
+      </div>
+      <div class="spread">Swarmkeeper Ranger 4+</div>
+      <div class="description">
+        A tactically deep build that stacks forced movement effects to take advantage of effective positioning and area-of-effect spells.
+      </div>
+      <div class="expanded-text">
+        <p><b>Species:</b> <a href="https://5e.tools/races.html#minotaur_mpmm" target="_blank" rel="noopener noreferrer">Minotaur</a></p>
+        <p><b>Background:</b> <a href="https://5e.tools/backgrounds.html#giant%20foundling_bgg" target="_blank" rel="noopener noreferrer">Giant Foundling</a></p>
+        <p><b>Feats:</b> <a href="https://5e.tools/feats.html#strike%20of%20the%20giants_bgg" target="_blank" rel="noopener noreferrer">Strike of the Giants</a>, <a href="https://5e.tools/feats.html#charger_xphb" target="_blank" rel="noopener noreferrer">Charger</a>, <a href="https://5e.tools/feats.html#polearm%20master_xphb" target="_blank" rel="noopener noreferrer">Polearm Master</a></p>
+        <br>
+        <p>This build takes advantage of the numerous forced movement effects released in recent sourcebooks, stacking them to devastating effect. Some of its best uses include:
+          <ul>
+            <li>Pushing enemies into an area of effect</li>
+            <li>Pushing enemies far enough away that they have to spend actions Dashing to re-enter melee</li>
+            <li>Taking advantage of environmental hazards, such as cliffs</li>
+          </ul>
+        </p>
+        <br>
+        <p>
+          Specifically, it stacks the following features:
+          <ul>
+            <li>Strike of the Giants' Stone Strike, which can push foes back 10 feet on a hit</li>
+            <li>Swarmkeeper's Gathered Swarm, which can push foes back 15 feet on a hit</li>
+            <li>The Push weapon mastery, which can push foes back 10 feet on a hit</li>
+            <li>Minotaur's Hammering Horns, which can push foes back 10 feet on a hit, at the cost of a bonus action</li>
+            <li>The Charger feat can, which push foes back 10 feet on a hit if you move at least 10 feet towards them before hitting them</li>
+          </ul>
+          This is especially potent since Rangers get access to <i><a href="https://5e.tools/spells.html#spike%20growth_xphb" target="_blank" rel="noopener noreferrer">Spike Growth</a></i>, which damage to a foe that scales with how far they were pushed through it.
+        </p>
+        <br>
+        <p>
+          On top of that, it also has access to a powerful synergy with Polearm Master's Reactive Strike, which allows it to make an attack when a creature enters its range. Polearm Master works with <a href="https://5e.tools/items.html#pike_xphb" target="_blank" rel="noopener noreferrer">Pikes</a>, which have not only the Push mastery but also the Reach property, meaning that an approaching enemy can be smacked away before they even get a chance to attack, wasting their movement and leaving them within range to attack on your turn.
+        </p>
+        <br>
+        <p>
+          On top of the control options listed above, this build also has access to potent burst damage:
+          <ul>
+            <li>Stone Strike also deals 1d8 force damage alongside the push</li>
+            <li>Gathered Swarm can deal 1d6 piercing damage instead of pushing</li>
+            <li>Charger can deal 1d8 additional damage instead of pushing</li>
+          </ul>
+          This makes it a build that can truly work in any situation, whether it's an open plain or a cramped room.
+        </p>
+      </div>
+      <div class="scroll-fade"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <button class="close-btn"></button>
+      <h2>Barbarian but better</h2>
+      <div class="tags">
+        <span class="tag">Full Caster</span>
+        <span class="tag">Tank</span>
+        <span class="tag">AoE</span>
+      </div>
+      <div class="spread">Twilight Cleric 8+ / Warlock 1</div>
+      <div class="description">
+        An incredibly durable character which focuses on damage reduction and mitigation.
+      </div>
+      <div class="expanded-text">
+        <p><b>Species:</b> <a href="https://5e.tools/races.html#shadar-kai_mpmm" target="_blank" rel="noopener noreferrer">Shadar-Kai</a></p>
+        <p><b>Background:</b> <a href="https://5e.tools/backgrounds.html#mage%20of%20high%20sorcery_dsotdq" target="_blank" rel="noopener noreferrer">Mage of High Sorcery</a></p>
+        <p><b>Feats:</b> <a href="https://5e.tools/feats.html#initiate%20of%20high%20sorcery_dsotdq" target="_blank" rel="noopener noreferrer">Initiate of High Sorcery</a>, <a href="https://5e.tools/feats.html#adept%20of%20the%20white%20robes_dsotdq" target="_blank" rel="noopener noreferrer">Adept of the White Robes</a>, <a href="https://5e.tools/feats.html#heavy%20armor%20master_xphb" target="_blank" rel="noopener noreferrer">Heavy Armor Master</a></p>
+        <br>
+        <p>
+          Have you ever worried about losing a character? If so, then this is the build for you. It boasts the following features:
+          <ul>
+            <li>A huge pool of temporary HP which regenerates every turn (from Twilight Cleric's Channel Divinity, <a href="https://5e.tools/classes.html#cleric_phb,state:feature=s1-0~sub_twilight_tce=b1" target="_blank" rel="noopener noreferrer">Twilight Sanctuary</a>)</li>
+            <li>Complete resistance to all damage via Shadar-Kai's Blessing of the Raven Queen</li>
+            <li>
+              A range of damage reduction options, including:
+              <ul>
+                <li>Heavy Armor Master's Damage Reduction, which reduces incoming bludgeoning/piercing/slashing damage by your proficiency bonus</li>
+                <li>Adept of the White Robes' Protective Ward, which lets you expend a spell slot to reduce the damage you take by 1d6 per level, plus your spellcasting ability modifier. As a Cleric, you've got no shortage of spell slots either.</li>
+              </ul>
+            </li>
+            <li><a href="https://5e.tools/spells.html#armor%20of%20agathys_xphb" target="_blank" rel="noopener noreferrer"><i>Armor of Agathys</i></a>, a Warlock-exclusive spell which deals damage to foes who hit you.</li>
+          </ul>
+          <br>
+          Normally, one of the biggest issues with tanking is that enemies can just target other characters. Not this build, though - Clerics get access to <a href="https://5e.tools/spells.html#spirit%20guardians_xphb" target="_blank" rel="noopener noreferrer"><i>Spirit Guardians</i></a>, one of the most potent offensive spells in the game. Nobody's ignoring you in a hurry!
+        </p>
+      </div>
+      <div class="scroll-fade"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <button class="close-btn"></button>
+      <h2>How to take 5 turns per round</h2>
+      <div class="tags">
+        <span class="tag">Full Caster</span>
+        <span class="tag">Damage Dealer</span>
+        <span class="tag">AoE</span>
+      </div>
+      <div class="spread">Wildfire Druid 7+</div>
+      <div class="description">
+        An unconventional and mechanically experimental build which utilises effects which trigger on other turns.
+      </div>
+      <div class="expanded-text">
+          <p><b>Species:</b> <a href="https://5e.tools/races.html#simic%20hybrid_ggr" target="_blank" rel="noopener noreferrer">Simic Hybrid</a></p>
+          <p><b>Background:</b> Your choice</p>
+          <p><b>Feats:</b> Your choice</p>
+          <br>
+          In the 2024 rules, many area-of-effect spells received a massive buff, as they can now be triggered in three different ways:
+          <ul>
+            <li>When a creature moves into the area</li>
+            <li>When the area moves onto a creature</li>
+            <li>When a creature ends its turn in the area</li>
+          </ul>
+          This opened up the possibility to trigger these AoEs many more times than had previously been possible. One particularly strong option is <a href="https://5e.tools/spells.html#conjure%20woodland%20beings_xphb" target="_blank" rel="noopener noreferrer"><i>Conjure Woodland Beings</i></a>, a 10ft Emanation which deals 5d8 damage (save for half), and which moves with you. However, while it can trigger an unlimited number of times per round, it can only damage the same creature once each turn.
+          <br><br>
+          This build utilises off-turn movement effects - teleports, reactions, and summons - to act on as many turns as possible, triggering <i>Conjure Woodland Beings</i> as many times as possible. However, it does require a very specific sequence of actions to work:
+          <ul>
+            <li>
+              On your turn:
+              <ul>
+                <li>Action: Ready movement</li>
+                <li>Movement: Move forward, triggering CWB, then move back 5ft</li>
+                <li>Bonus Action: Command your Wildfire Spirit to use Fiery Teleportation</li>
+              </ul>
+            </li>
+            <li>
+              On your Wildfire Spirit's turn:
+              <ul>
+                <li>Action: The Spirit follows your command, using Fiery Teleportation to teleport you 10ft above an enemy. Not only does this trigger CWB, but you can then use Simic Hybrid's Manta Glide to move 20ft horizontally as you fall, potentially triggering CWB again.</li>
+              </ul>
+            </li>
+            <li>
+              On enemy turns: CWB triggers if they end their turn in the area
+            </li>
+            <li>
+              As your reaction: Use your Readied movement to trigger CWB a 5th time
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="scroll-fade"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <button class="close-btn"></button>
+      <h2>Identity Thief</h2>
+      <div class="tags">
+        <span class="tag">Full Caster</span>
+        <span class="tag">Intrigue</span>
+      </div>
+      <div class="spread">Warlock 2 / Whispers Bard 6+</div>
+      <div class="description">
+        Capable of not only disguising itself as anyone, but stealing their memories too, this out-of-combat build has no equal in 5th edition.
+      </div>
+      <div class="expanded-text">
+        <p><b>Species:</b> <a href="https://5e.tools/races.html#changeling_efa" target="_blank" rel="noopener noreferrer">Changeling</a></p>
+        <p><b>Background:</b> <a href="https://5e.tools/backgrounds.html#mage%20of%20high%20sorcery_dsotdq" target="_blank" rel="noopener noreferrer">Mage of High Sorcery</a></p>
+        <p><b>Feats:</b> <a href="https://5e.tools/feats.html#initiate%20of%20high%20sorcery_dsotdq" target="_blank" rel="noopener noreferrer">Initiate of High Sorcery</a>, <a href="https://5e.tools/feats.html#actor_xphb" target="_blank" rel="noopener noreferrer">Actor</a>, <a href="https://5e.tools/feats.html#adept%20of%20the%20red%20robes_dsotdq" target="_blank" rel="noopener noreferrer">Adept of the Red Robes</a></p>
+        <br>
+        Although over 99% of published D&D content centres around the combat system, a considerable portion of games focus on the other two pillars, especially social interaction. This is a build for those games.
+        <br><br>
+        It turns out that one of the easiest ways to solve out-of-combat challenges is just to pretend to be someone else. In theory, every feature that does this is supposed to have a drawback which prevents them from becoming too powerful, but they can be combined to cancel out any of their weaknesses and make the ultimate assassin:
+        <ul>
+          <li>Mimic voices using Actor</li>
+          <li>Change your clothes with unlimited uses of <i><a href="https://5e.tools/spells.html#disguise%20self_xphb" target="_blank" rel="noopener noreferrer">Disguise Self</a></i> from the <a href="https://5e.tools/optionalfeatures.html#mask%20of%20many%20faces_xphb" target="_blank" rel="noopener noreferrer">Mask of Many Faces</a> invocation</li>
+          <li>Change size using Changeling's Shape-Shifter</li>
+          <li>Steal the memories of those you kill using <a href="https://5e.tools/classes.html#bard_phb,state:feature=s5-0~sub_whispers_xge=b1" target="_blank" rel="noopener noreferrer">Mantle of Whispers</a></li>
+          <li>Forge documents with a <a href="https://5e.tools/items.html#forgery%20kit_xphb" target="_blank" rel="noopener noreferrer">Forgery Kit</a></li>
+        </ul>
+        <br>
+        On top of this, Bard and Warlock have perhaps the best general-purpose infiltration kit in the game.
+        <ul>
+          <li>The <a href="https://5e.tools/optionalfeatures.html#misty%20visions_xphb" target="_blank" rel="noopener noreferrer">Misty Visions</a> invocation gives unlimited casts of <i><a href="https://5e.tools/spells.html#silent%20image_xphb" target="_blank" rel="noopener noreferrer">Silent Image</a></i>, perfect for a stealthy illusionist</li>
+          <li><i><a href="https://5e.tools/spells.html#suggestion_xphb" target="_blank" rel="noopener noreferrer">Suggestion</a></i> is the closest thing you'll ever get to mind control.</li>
+          <li><i><a href="https://5e.tools/spells.html#message_xphb" target="_blank" rel="noopener noreferrer">Message</a></i> is essentially unlimited telepathy</li>
+          <li><i><a href="https://5e.tools/spells.html#comprehend%20languages_xphb" target="_blank" rel="noopener noreferrer">Comprehend Languages</a></i> and <i><a href="https://5e.tools/spells.html#tongues_xphb" target="_blank" rel="noopener noreferrer">Tongues</a></i> let you blend into any situation</li>
+          <li><i><a href="https://5e.tools/spells.html#detect%20thoughts_xphb" target="_blank" rel="noopener noreferrer">Detect Thoughts</a></i> is perfect for stealing information</li>
+          <li><i><a href="https://5e.tools/spells.html#major%20image_xphb" target="_blank" rel="noopener noreferrer">Major Image</a></i> is the best distraction in the game</li>
+          <li>Bard's Expertise, Jack of All Trades, and <i><a href="https://5e.tools/spells.html#enhance%20ability_xphb" target="_blank" rel="noopener noreferrer">Enhance Ability</a></i> are somewhat useful in check-heavy campaigns</li>
+        </ul>
+        <br>
+        In very check-heavy campaigns, take Adept of the Red Robes before Actor. With all your bonuses running, your minimum roll on a check to pretend to be someone else is 10 (Red Robes)+3(Proficiency)+3(Expertise)+3(Charisma)+5(Mantle of Whispers) = 24, with a mean roll of 26.75. You might not be able to mimic voices but you'll definitely be able to convince people otherwise!
+      </div>
+    </div>
+    <div class="scroll-fade"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-content">
+      <button class="close-btn"></button>
+      <h2>Gunbarian</h2>
+      <div class="tags">
+        <span class="tag">Damage Dealer</span>
+        <span class="tag">Martial</span>
+        <span class="tag">5e 2014</span>
+      </div>
+      <div class="spread">Giant Barbarian 6 / Fighter 1+</div>
+      <div class="description">
+        Ever worried about running out of bullets? Well, worry no more, because this build uses its own guns as ammunition by throwing them like boomerangs.
+      </div>
+      <div class="expanded-text">
+        <p><b>Species:</b> <a href="https://2014.5e.tools/races.html#human%20(variant)_phb" target="_blank" rel="noopener noreferrer">Variant Human</a></p>
+        <p><b>Feats:</b> <a href="https://2014.5e.tools/feats.html#gunner_tce" target="_blank" rel="noopener noreferrer">Gunner</a>, <a href="https://2014.5e.tools/feats.html#sharpshooter_phb" target="_blank" rel="noopener noreferrer">Sharpshooter</a>, <a href="https://2014.5e.tools/feats.html#crossbow%20expert_phb" target="_blank" rel="noopener noreferrer">Crossbow Expert</a></p>
+        <br>
+        Picture a grizzled ex-military mercenary who lets his colossal musket do the talking for him. But in combat, he takes out the huge weapon, loads it, cocks it, aims it, and then... throws it?
+        <br><br>
+        This build takes advantage of an unusual interaction that makes throwing guns even better than firing them. Specifically,
+        <ul>
+          <li>Giant Barbarian's <a href="https://2014.5e.tools/classes.html#barbarian_phb,state:feature=s5-0~sub_giant_bgg=b1" target="_blank" rel="noopener noreferrer">Elemental Cleaver</a> can give any weapon the Thrown property, including ranged weapons. This lets you make ranged weapon attacks with Strength, and deal bonus elemental damage too.</li>
+          <li>Gunner lets you ignore the loading property and make as many attacks with your gun as any other weapon-user can with their sword.</li>
+          <li>With Sharpshooter letting you ignore disadvantage from attacking at long range, and Crossbow expert letting you ignore disadvantage from attacking in melee, positioning barely matters - if you can see a foe, they're in danger.</li>
+          <li>A single level in Fighter grants the <a href="https://2014.5e.tools/optionalfeatures.html#archery_phb" target="_blank" rel="noopener noreferrer">Archery</a> Fighting Style, which dramatically boosts the average damage of Sharpshooter's -5/+10 power attacks.</li>
+          <li>Later on, more levels in Fighter can give access to features like <a href="https://2014.5e.tools/optionalfeatures.html#precision%20attack_phb" target="_blank" rel="noopener noreferrer">Precision Attack</a> which push your damage even further.</li>
+        </ul>
+        <br>
+        Possibly the funniest detail of this build is that it doesn't actually remove the Ammunition property from its thrown weapons - they're still discharging midflight and expending ammunition before they hit the foe and teleport back to your hand.
+      </div>
+    </div>
+    <div class="scroll-fade"></div>
+  </div>
+
+</div>
+<script>
+  const header = document.querySelector(".header");
+  const grid = document.querySelector(".grid");
+  const cards = document.querySelectorAll(".card");
+  const MARGIN = window.innerWidth < 500 ? 10 : 40;
+
+  cards.forEach(card => {
+    const closeBtn = card.querySelector(".close-btn");
+
+  card.addEventListener("click", (e) => {
+    //if (e.currentTarget !== e.target) return;
+    if (card.classList.contains("fullscreen")) return;
+    expandCard(card);
+  });
+
+    // Close button
+    closeBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      collapseCard(card);
+    });
+  });
+
+let isAnimating = false; // block rapid clicks
+
+function expandCard(card) {
+  if (isAnimating || card.classList.contains("fullscreen")) return;
+  isAnimating = true;
+
+  // Remove any existing placeholders
+  document.querySelectorAll('.card-placeholder').forEach(p => p.remove());
+
+  const rect = card.getBoundingClientRect();
+
+  // Create placeholder
+  const placeholder = document.createElement("div");
+  placeholder.style.width = rect.width + "px";
+  placeholder.style.height = rect.height + "px";
+  placeholder.classList.add("card-placeholder");
+  card.parentNode.insertBefore(placeholder, card);
+  card.dataset.placeholderId = Date.now();
+  placeholder.dataset.id = card.dataset.placeholderId;
+
+  // Save original size
+  card.dataset.originalWidth = rect.width;
+  card.dataset.originalHeight = rect.height;
+
+  // Move card to fixed position
+  card.style.position = "fixed";
+  card.style.top = rect.top + "px";
+  card.style.left = rect.left + "px";
+  card.style.width = rect.width + "px";
+  card.style.height = rect.height + "px";
+
+  card.classList.add("expanding");
+  header.classList.add("blurred");
+  grid.classList.add("blurred");
+  document.body.style.overflow = "hidden";
+
+  card.getBoundingClientRect(); // force reflow
+
+  requestAnimationFrame(() => {
+    card.style.top = "40px";
+    card.style.left = "40px";
+    card.style.width = `calc(100vw - 80px)`;
+    card.style.height = `calc(100vh - 80px)`;
+  });
+
+  const onTransitionEnd = (e) => {
+    if (["top","left","width","height"].includes(e.propertyName)) {
+      card.classList.add("fullscreen");
+      card.removeEventListener("transitionend", onTransitionEnd);
+      isAnimating = false;
+    }
+  };
+
+  card.addEventListener("transitionend", onTransitionEnd);
+}
+
+function collapseCard(card) {
+  if (!card.classList.contains("fullscreen") && !card.classList.contains("expanding")) return;
+
+  grid.classList.remove("blurred");
+  header.classList.remove("blurred");
+  card.classList.remove("fullscreen");
+
+  card.scrollTop = 0;
+
+  const placeholder = document.querySelector(
+    `.card-placeholder[data-id="${card.dataset.placeholderId}"]`
+  );
+
+  // If placeholder is gone for some reason, just reset style and return
+  if (!placeholder) {
+    card.classList.remove("expanding");
+    card.removeAttribute("style");
+    document.body.style.overflow = "";
+    return;
+  }
+
+  const rect = placeholder.getBoundingClientRect();
+
+  requestAnimationFrame(() => {
+    card.style.top = rect.top + "px";
+    card.style.left = rect.left + "px";
+    card.style.width = rect.width + "px";
+    card.style.height = rect.height + "px";
+  });
+
+  const onTransitionEnd = (e) => {
+    if (["top","left","width","height"].includes(e.propertyName)) {
+      card.classList.remove("expanding");
+      card.removeAttribute("style");
+      document.body.style.overflow = "";
+      placeholder.remove();
+      card.removeEventListener("transitionend", onTransitionEnd);
+    }
+  };
+
+  card.addEventListener("transitionend", onTransitionEnd);
+}
+
+  document.addEventListener("click", (e) => {
+    const expandedCard = document.querySelector(".card.fullscreen");
+    if (!expandedCard) return;
+
+    // If clicking a link, do nothing
+    if (e.target.closest("a")) return;
+
+    // If click is NOT inside the expanded card
+    if (!expandedCard.contains(e.target)) {
+      collapseCard(expandedCard);
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const expandedCard = document.querySelector(".card.fullscreen");
+      if (expandedCard) {
+        collapseCard(expandedCard);
+      }
+    }
+  });
+</script>
+</body>
+</html>
