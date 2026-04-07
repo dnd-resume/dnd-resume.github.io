@@ -922,6 +922,7 @@ function collapseCard(card) {
 
     // If click is NOT inside the expanded card
     if (!expandedCard.contains(e.target)) {
+      history.pushState(null, '', '/');
       collapseCard(expandedCard);
     }
   });
@@ -930,6 +931,7 @@ function collapseCard(card) {
     if (e.key === "Escape") {
       const expandedCard = document.querySelector(".card.fullscreen");
       if (expandedCard) {
+        history.pushState(null, '', '/');
         collapseCard(expandedCard);
       }
     }
