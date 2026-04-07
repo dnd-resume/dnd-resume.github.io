@@ -65,7 +65,7 @@ body::before {
   font-size: 2.8rem;
   letter-spacing: 2px;
   color: var(--gold);
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   text-shadow: 0 0 15px var(--gold-glow);
 }
 
@@ -448,19 +448,44 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
     line-height: 1.3;
   }
 }
+
+.tag {
+  display: inline-block;
+  border: 1px solid rgba(198,167,94,0.3);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-right: 8px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.tag:hover {
+  background: rgba(198,167,94,0.1);
+  border-color: rgba(198,167,94,0.5);
+  color: var(--text-main);
+}
+
+.header p {
+  margin-top: .7em;
+}
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>About me</h1>
+  <p>The best way to tell a compelling story is to support it with great mechanics.</p>
   <p>
-    The best way to tell a compelling story is to support it with great mechanics.<br><br>
     I'm a mechanically engaged player who enjoys creating fun and outside-the-box characters around emergent mechanical synergies.
     If you also love character building, I'm always happy to lend an ear, share tips, or brainstorm ideas together!
-    <br><br>
-    My dream group starts at level 8 or higher, has an even split of roleplay and combat, sticks to RAW/RAI rather than rule-of-cool, allows most published content, and most importantly is focused on creating cohesive narratives together instead of freeform improv.
   </p>
+  <p>
+    My dream group starts between level 3 to 8, has an even split of roleplay and combat, sticks to RAW/RAI rather than rule-of-cool, allows most published content, and most importantly is focused on creating cohesive narratives together instead of freeform improv.
+  </p>
+  <p>Check out six of my favourite character builds below!</p>
 </div>
 
 <div class="grid">
@@ -473,7 +498,7 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
         <span class="tag">Summoner</span>
         <span class="tag">Status Effects</span>
       </div>
-      <div class="spread">Order Cleric 3 / Necromancy Wizard 6+</div>
+      <div class="spread">Cleric 1 / Necromancy Wizard 5 / Order Cleric 3 / Necromancy Wizard 6+</div>
       <div class="description">
         A table-friendly summoner built around inflicting status effects and capitalising on them.
       </div>
@@ -500,7 +525,7 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
             <li>Necromancy Wizard's Undead Thralls feature makes the normally squishy spirit dramatically more durable by adding your Wizard level to its health, and boosts its damage by adding your proficiency bonus to damage rolls.</li>
             <li>Kobold's Draconic Cry can give all your allies, including the Spirit, advantage on their attacks against any creature caught in the area of effect for an entire round.</li>
             <li>Order Cleric's Voice of Authority can grant one ally, including the spirit, an additional attack when you target them with a spell. This can even be a buff such as <i><a href="https://5e.tools/spells.html#longstrider_xphb" target="_blank" rel="noopener noreferrer">Longstrider</a></i>, <i><a href="https://5e.tools/spells.html#vortex%20warp_scc" target="_blank" rel="noopener noreferrer">Vortex Warp</a></i>, or <i><a href="https://5e.tools/spells.html#healing%20word_xphb" target="_blank" rel="noopener noreferrer">Healing Word</a></i>.</li>
-            <li>If the spirit already has advantage on its attacks (for example, against a Paralyzed foe), Knight of the Crown's Commanding Rally replaces Draconic Cry as the best bonus action option, granting the Spirit an additional attack whilst still conserving your reaction for defensive spells.</li>
+            <li>If the spirit already has advantage on its attacks (for example, against a Paralyzed foe), Knight of the Crown's Commanding Rally replaces Draconic Cry as the best bonus action option, granting the Spirit an additional attack whilst still conserving your action and reaction for <i>Ray of Sickness</i> and defensive spells respectively.</li>
           </ul>
           <br>
           Finally, this build has access to some synergies and emergent interactions that take it to the next level.
@@ -638,8 +663,8 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
       </div>
       <div class="expanded-text">
           <p><b>Species:</b> <a href="https://5e.tools/races.html#simic%20hybrid_ggr" target="_blank" rel="noopener noreferrer">Simic Hybrid</a></p>
-          <p><b>Background:</b> Your choice</p>
-          <p><b>Feats:</b> Your choice</p>
+          <p><b>Background:</b> <a href="https://5e.tools/backgrounds.html#knight%20of%20the%20gauntlet_frhof" target="_blank" rel="noopener noreferrer">Knight of the Gauntlet</a></p>
+          <p><b>Feats:</b> <a href="https://5e.tools/feats.html#tyro%20of%20the%20gauntlet_frhof" target="_blank" rel="noopener noreferrer">Tyro of the Gauntlet</a></p>
           <br>
           In the 2024 rules, many area-of-effect spells received a massive buff, as they can now be triggered in three different ways:
           <ul>
@@ -654,7 +679,7 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
             <li>
               On your turn:
               <ul>
-                <li>Action: Ready movement</li>
+                <li>Action: Ready movement. As a side benefit, this triggers Tyro of the Gauntlet, giving the next attack roll against you disadvantage.</li>
                 <li>Movement: Move forward, triggering CWB, then move back 5ft</li>
                 <li>Bonus Action: Command your Wildfire Spirit to use Fiery Teleportation</li>
               </ul>
