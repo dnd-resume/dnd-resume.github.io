@@ -784,6 +784,13 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
 
 </div>
 <script>
+  // On load, convert ?p=necrorder to a clean /necrorder in the address bar
+  const params = new URLSearchParams(window.location.search);
+  const pathCard = params.get('p');
+  if (pathCard) {
+    history.replaceState(null, '', '/' + pathCard);
+  }
+
   const header = document.querySelector(".header");
   const grid = document.querySelector(".grid");
   const cards = document.querySelectorAll(".card");
@@ -795,12 +802,14 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
   card.addEventListener("click", (e) => {
     //if (e.currentTarget !== e.target) return;
     if (card.classList.contains("fullscreen")) return;
+    history.pushState(null, '', '/' + card.id);
     expandCard(card);
   });
 
     // Close button
     closeBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+      history.pushState(null, '', '/');
       collapseCard(card);
     });
   });
@@ -925,6 +934,22 @@ function collapseCard(card) {
       }
     }
   });
+
+  window.addEventListener('popstate', () => {
+    const id = window.location.pathname.slice(1);
+    const currentlyOpen = document.querySelector('.card.fullscreen, .card.expanding');
+    if (currentlyOpen) collapseCard(currentlyOpen);
+    if (id) {
+      const target = document.getElementById(id);
+      if (target) setTimeout(() => expandCard(target), 500);
+    }
+  });
+
+  const initialSlug = pathCard || window.location.pathname.slice(1);
+  if (initialSlug) {
+    const target = document.getElementById(initialSlug);
+    if (target) expandCard(target);
+  }
 </script>
 </body>
 </html>
