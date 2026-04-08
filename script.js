@@ -166,3 +166,27 @@ function collapseCard(card) {
     const target = document.getElementById(initialSlug);
     if (target) expandCard(target);
   }
+
+cards.forEach(card => {
+  let pendingReset = null;
+
+  card.addEventListener('mouseenter', () => {
+    if (pendingReset) {
+      card.removeEventListener('transitionend', pendingReset);
+      pendingReset = null;
+    }
+    card.style.setProperty('--icon-scale', '1.1');
+    card.style.setProperty('--icon-opacity', '0.6');
+    card.classList.add('icon-pulsing');
+  });
+
+  card.addEventListener('mouseleave', () => {
+    card.classList.remove('icon-pulsing');
+    card.style.setProperty('--icon-opacity', '0');
+    pendingReset = () => {
+      card.style.setProperty('--icon-scale', '1');
+      pendingReset = null;
+    };
+    card.addEventListener('transitionend', pendingReset, { once: true });
+  });
+});
