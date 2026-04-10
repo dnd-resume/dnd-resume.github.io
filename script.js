@@ -190,3 +190,9 @@ cards.forEach(card => {
     card.addEventListener('transitionend', pendingReset, { once: true });
   });
 });
+
+const scrollHint = document.querySelector('.scroll-hint');
+
+window.addEventListener('scroll', () => {
+  scrollHint.classList.add('hidden');
+}, { once: true });
