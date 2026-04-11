@@ -624,3 +624,7 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
 .has-expanded .card::after {
   display: none;
 }
+
+html {
+  background: #0e0e12;
+}
