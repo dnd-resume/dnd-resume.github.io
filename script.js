@@ -82,6 +82,7 @@ function expandCard(card) {
   };
 
   card.addEventListener("transitionend", onTransitionEnd);
+  grid.classList.add('has-expanded');
 }
 
 function collapseCard(card) {

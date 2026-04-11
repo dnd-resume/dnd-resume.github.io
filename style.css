@@ -620,3 +620,7 @@ body::-webkit-scrollbar-thumb:hover { background: rgba(198,167,94,0.85); }
   padding-bottom: 0px;
   margin-top: 0px; /* these both defaulted to 20px and made cards too big */
 }
+
+.has-expanded .card::after {
+  display: none;
+}
