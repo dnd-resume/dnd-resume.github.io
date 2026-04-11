@@ -34,8 +34,11 @@ function expandCard(card) {
   if (isAnimating || card.classList.contains("fullscreen")) return;
   isAnimating = true;
 
-  // Remove any existing placeholders
   document.querySelectorAll('.card-placeholder').forEach(p => p.remove());
+
+  // Set has-expanded BEFORE measuring so placeholder captures correct height
+  //grid.classList.add('has-expanded');
+  //card.getBoundingClientRect(); // force reflow so spacer collapses immediately
 
   const rect = card.getBoundingClientRect();
 
@@ -74,15 +77,24 @@ function expandCard(card) {
   });
 
   const onTransitionEnd = (e) => {
-    if (["top","left","width","height"].includes(e.propertyName)) {
-      card.classList.add("fullscreen");
-      card.removeEventListener("transitionend", onTransitionEnd);
-      isAnimating = false;
+  if (["top","left","width","height"].includes(e.propertyName)) {
+    card.classList.add("fullscreen");
+
+    card.querySelector('.card-content').scrollTop = 0;
+    card.removeEventListener("transitionend", onTransitionEnd);
+    isAnimating = false;
+
+    if (!grid.classList.contains('has-expanded')) {
+      const spacer = card.querySelector('.indicator-spacer');
+      const spacerHeight = spacer.getBoundingClientRect().height;
+      grid.classList.add('has-expanded');
+      card.getBoundingClientRect(); // force reflow
+      placeholder.style.height = (parseFloat(placeholder.style.height) - spacerHeight) + 'px';
     }
-  };
+  }
+};
 
   card.addEventListener("transitionend", onTransitionEnd);
-  grid.classList.add('has-expanded');
 }
 
 function collapseCard(card) {
